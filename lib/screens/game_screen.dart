@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../state/game_state.dart';
 import '../widgets/sudoku_grid.dart';
 import '../widgets/number_pad.dart';
+import '../logic/ad_manager.dart';
+import '../widgets/banner_ad_widget.dart'; // Import
 
 class GameScreen extends StatefulWidget {
   final int? difficulty;
@@ -15,12 +17,15 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   late final GameController _controller;
+  late final AdManager _adManager; // AdManager
   bool _isDialogShowing = false;
 
   @override
   void initState() {
     super.initState();
     _controller = GameController();
+    _adManager = AdManager(); // Init
+    _adManager.loadRewardedAd(); // Load Ad
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.loadSaved) {
@@ -36,6 +41,7 @@ class _GameScreenState extends State<GameScreen> {
 
     _controller.addListener(_onGameStatusChanged);
   }
+  // ... (rest of file until dispose)
 
   void _onGameStatusChanged() {
     if (_controller.status == GameStatus.won && !_isDialogShowing) {
@@ -145,6 +151,7 @@ class _GameScreenState extends State<GameScreen> {
   void dispose() {
     _controller.removeListener(_onGameStatusChanged);
     _controller.dispose();
+    _adManager.dispose();
     super.dispose();
   }
 
@@ -258,10 +265,40 @@ class _GameScreenState extends State<GameScreen> {
                     onClearPressed: () => _controller.clearCell(),
                     onNotePressed: () => _controller.toggleNoteMode(),
                     onUndoPressed: () => _controller.undo(),
+                    onHintPressed: () {
+                      if (_controller.selectedCell == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Select a cell first to get a hint!"),
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (_adManager.isAdReady) {
+                        _adManager.showRewardedAd(
+                          onUserEarnedReward: (reward) {
+                            if (!mounted) return;
+                            _controller.useHint();
+                          },
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Ad not ready yet. Try again in a moment.",
+                            ),
+                          ),
+                        );
+                        // Try loading again just in case
+                        _adManager.loadRewardedAd();
+                      }
+                    },
                   ),
                 ),
 
                 const SizedBox(height: 16),
+                const BannerAdWidget(),
               ],
             ),
           );

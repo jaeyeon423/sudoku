@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../state/game_state.dart';
 import 'game_screen.dart';
 import 'statistics_screen.dart';
+import '../widgets/banner_ad_widget.dart';
 
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
@@ -55,22 +56,29 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         centerTitle: true,
       ),
       body: _currentIndex == 0 ? _buildHomeView() : const StatisticsScreen(),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          if (index == 0) _checkSave(); // Refresh save status when going home
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: "Statistics",
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const BannerAdWidget(),
+          BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+              if (index == 0)
+                _checkSave(); // Refresh save status when going home
+            },
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bar_chart),
+                label: "Statistics",
+              ),
+            ],
+            selectedItemColor: Colors.teal,
           ),
         ],
-        selectedItemColor: Colors.teal,
       ),
     );
   }

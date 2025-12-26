@@ -221,6 +221,46 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void useHint() {
+    if (status != GameStatus.playing) return;
+    if (selectedCell == null || board == null || solution == null) return;
+
+    final r = selectedCell!.row;
+    final c = selectedCell!.col;
+    final cell = board!.grid[r][c];
+
+    // If already correct and locked, do nothing (or find another cell?)
+    // For now, assume hint applies to selected cell.
+    if (cell.isReadOnly) return;
+
+    final correctVal = solution!.grid[r][c].value;
+    if (correctVal == null) return; // Should not happen
+
+    // Capture state for undo (treat hint as a move?)
+    // Decide: Can you UNDO a hint? Yes, why not.
+    int? prevVal = cell.value;
+    List<int> prevNotes = List.from(cell.notes);
+    List<({int r, int c, int val})> removedNotes = [];
+
+    cell.value = correctVal;
+    cell.notes.clear();
+    cell.isError = false;
+    cell.isReadOnly = true; // Lock it as if it were a correct input
+
+    _checkLineCompletion(r, c);
+    removedNotes = _autoRemoveNotes(r, c, correctVal);
+
+    _recordMove(r, c, prevVal, correctVal, prevNotes, removedNotes);
+    _calculateCompletedNumbers();
+
+    if (!_hasEmptyCells()) {
+      _checkCompletion();
+    }
+
+    saveGame();
+    notifyListeners();
+  }
+
   void _recordMove(
     int r,
     int c,

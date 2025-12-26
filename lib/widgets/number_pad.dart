@@ -4,7 +4,8 @@ class NumberPad extends StatelessWidget {
   final Function(int) onNumberPressed;
   final VoidCallback onClearPressed;
   final VoidCallback onNotePressed;
-  final VoidCallback? onUndoPressed; // New
+  final VoidCallback? onUndoPressed;
+  final VoidCallback? onHintPressed; // New
   final bool isNoteMode;
   final Set<int> completedNumbers;
   final bool canUndo; // New
@@ -15,6 +16,7 @@ class NumberPad extends StatelessWidget {
     required this.onClearPressed,
     required this.onNotePressed,
     this.onUndoPressed,
+    this.onHintPressed,
     required this.isNoteMode,
     this.completedNumbers = const {},
     this.canUndo = false,
@@ -39,6 +41,12 @@ class NumberPad extends StatelessWidget {
               label: "Memo",
               isActive: isNoteMode,
               onTap: onNotePressed,
+            ),
+            _buildActionButton(
+              icon: Icons.lightbulb_outline,
+              label: "Hint",
+              isActive: false,
+              onTap: onHintPressed ?? () {},
             ),
             _buildActionButton(
               icon: Icons.delete_outline,
