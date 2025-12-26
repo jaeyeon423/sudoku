@@ -122,8 +122,6 @@ class _GameScreenState extends State<GameScreen> {
             _buildDifficultyOption(context, "Medium", 40),
             _buildDifficultyOption(context, "Hard", 55),
             _buildDifficultyOption(context, "Expert", 64),
-            const Divider(),
-            _buildDifficultyOption(context, "Test (1 Empty)", 1),
           ],
         );
       },
@@ -311,7 +309,6 @@ class _GameScreenState extends State<GameScreen> {
     if (empty < 30) return "Easy";
     if (empty < 45) return "Medium";
     if (empty < 60) return "Hard";
-    if (empty == 1) return "Test";
     return "Expert";
   }
 }

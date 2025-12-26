@@ -155,8 +155,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             _buildDifficultyOption(context, "Medium", 40),
             _buildDifficultyOption(context, "Hard", 55),
             _buildDifficultyOption(context, "Expert", 64), // Very few hints
-            const Divider(),
-            _buildDifficultyOption(context, "Test (1 Empty)", 1),
           ],
         );
       },
