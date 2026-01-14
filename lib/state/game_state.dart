@@ -261,6 +261,22 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void revive() {
+    if (status != GameStatus.lost) return;
+
+    status = GameStatus.playing;
+    mistakes = 0; // Reset mistakes to 0 (Fresh start)
+    // OR: mistakes = maxMistakes - 1; // Give one last chance
+
+    // Remove the error from the last cell if it caused the game over?
+    // Actually, usually users want to see where they messed up.
+    // But mistakes are cleared, so the counter is 0/3.
+
+    _startTimer();
+    saveGame();
+    notifyListeners();
+  }
+
   void _recordMove(
     int r,
     int c,

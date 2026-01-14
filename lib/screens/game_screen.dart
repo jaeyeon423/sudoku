@@ -90,6 +90,24 @@ class _GameScreenState extends State<GameScreen> {
         title: const Text("Game Over"),
         content: const Text("You made too many mistakes (3/3)."),
         actions: [
+          if (_adManager.isAdReady) // Only show if ad is ready
+            TextButton(
+              onPressed: () {
+                _adManager.showRewardedAd(
+                  onUserEarnedReward: (reward) {
+                    Navigator.pop(context); // Close dialog
+                    _isDialogShowing = false;
+                    _controller.revive();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Game Resumed! Mistakes reset."),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: const Text("Watch Ad to Continue"),
+            ),
           TextButton(
             onPressed: () {
               Navigator.pop(context); // Close dialog

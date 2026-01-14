@@ -23,22 +23,33 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint("MainMenuScreen initState");
     _checkSave();
-    // We can't put _HomeView here because it needs methods from this state?
-    // Or we simply extract HomeView as a widget.
   }
 
   Future<void> _checkSave() async {
-    final hasSave = await _tempController.hasSavedGame();
-    if (mounted) {
-      setState(() {
-        _hasSave = hasSave;
-        _isLoading = false;
-      });
+    debugPrint("Checking for saved game...");
+    try {
+      final hasSave = await _tempController.hasSavedGame();
+      debugPrint("Has saved game: $hasSave");
+      if (mounted) {
+        setState(() {
+          _hasSave = hasSave;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error checking save: $e");
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   Future<void> _refreshHome() async {
+    debugPrint("Refreshing home...");
     await _checkSave();
   }
 

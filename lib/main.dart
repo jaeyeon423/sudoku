@@ -4,7 +4,19 @@ import 'screens/main_menu_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
+  debugPrint("WidgetsFlutterBinding initialized");
+
+  // Initialize Ads asynchronously so it doesn't block startup
+  MobileAds.instance
+      .initialize()
+      .then((status) {
+        debugPrint("MobileAds initialized: $status");
+      })
+      .catchError((error) {
+        debugPrint("MobileAds initialization failed: $error");
+      });
+
+  debugPrint("Calling runApp");
   runApp(const SudokuApp());
 }
 
